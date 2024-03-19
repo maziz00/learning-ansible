@@ -6,6 +6,7 @@ on:
             '*'
         branches:
             - master
+    workflow_dispatch:
 
 env:
     working-dir: 01-section
