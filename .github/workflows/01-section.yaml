@@ -7,16 +7,21 @@ on:
         branches:
             - master
 
+env:
+    working-dir: 01-section
+
 jobs:
     build-image:
         runs-on: ubuntu-latest
         defaults:
             run:
-                working-directory: ./01-section
+                working-directory: ${{ env.working-dir}}
         outputs:
             get-version: ${{ steps.get_version.outputs.VERSION }}
         steps:
             - uses: actions/checkout@v4
+              with:
+                path: ${{ env.working-dir }}
 
             - name: Set up Docker Buildx
               uses: docker/setup-buildx-action@v3
