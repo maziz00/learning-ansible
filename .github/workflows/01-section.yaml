@@ -37,4 +37,4 @@ jobs:
               with:
                 context: ${{ env.working-dir  }}
                 push: true
-                tags: maziz00/ssh-srv:${{ steps.get_version.outputs.tag }}
+                tags: mohaziz00/ssh-srv:${{ steps.get_version.outputs.tag }}
