@@ -15,7 +15,7 @@ jobs:
     build-image:
         runs-on: ubuntu-latest
         outputs:
-            get-version: ${{ steps.get_version.outputs.VERSION }}
+            get-version: ${{ steps.get_version.outputs.tag }}
         steps:
             - uses: actions/checkout@v4
               with:
@@ -33,11 +33,11 @@ jobs:
             - name: Get the version
               id: get_version
               run: |
-                echo "VERSION=${{ github.event.base_ref.tags }}" >> "$GITHUB_OUPUT"
+                echo "tag=${GITHUB_REF#refs/*/}" >> "$GITHUB_OUTPUT"
                 echo "$GITHUB_OUTPUT"
 
             - name: Build and push
               uses: docker/build-push-action@v5
               with:
                 push: true
-                tags: maziz00/ssh-srv:${{ steps.get_version.outputs.VERSION }}
+                tags: maziz00/ssh-srv:${{ steps.get_version.outputs.tag }}
