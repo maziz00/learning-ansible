@@ -3,7 +3,7 @@ name: Build & Push Image
 on:
     push:
         tags:
-            '*'
+            'v*.*'
         branches:
             - master
     workflow_dispatch:
@@ -33,8 +33,8 @@ jobs:
             - name: Get the version
               id: get_version
               run: |
-                echo "VERSION=${{ github.ref }}#refs/tags/" >> "$GITHUB_OUPUT"
-                cat "$GITHUB_OUTPUT"
+                echo "VERSION=${{ github.event.base_ref.tags }}" >> "$GITHUB_OUPUT"
+                echo "$GITHUB_OUTPUT"
 
             - name: Build and push
               uses: docker/build-push-action@v5
