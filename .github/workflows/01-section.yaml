@@ -1,5 +1,4 @@
-name: Build & Push Docker image
-
+name: Build & Push Image
 
 on:
     push:
@@ -37,6 +36,3 @@ jobs:
               with:
                 push: true
                 tags: maziz00/ssh-srv:${{ steps.get_version.outputs.VERSION }}
-
-
-                
