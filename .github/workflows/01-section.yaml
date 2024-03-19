@@ -13,9 +13,6 @@ env:
 jobs:
     build-image:
         runs-on: ubuntu-latest
-        defaults:
-            run:
-                working-directory: ${{ env.working-dir}}
         outputs:
             get-version: ${{ steps.get_version.outputs.VERSION }}
         steps:
@@ -34,7 +31,9 @@ jobs:
 
             - name: Get the version
               id: get_version
-              run: echo ::set-output name=VERSION::${GITHUB_REF#refs/tags/}
+              run: |
+                echo "VERSION=${{ github.ref#refs/tags/ }}" >> "$GITHUB_OUPUT"
+                cat "$GITHUB_OUTPUT"
 
             - name: Build and push
               uses: docker/build-push-action@v5
