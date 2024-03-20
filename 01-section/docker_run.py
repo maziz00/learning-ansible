@@ -1,6 +1,6 @@
 import subprocess
 
-def pull_and_run_containers(image_name, tag):
+def pull_and_run_containers(image_name, tag, base_name="ssh-srv"):
   """
   Pulls a Docker image, tags it, runs 3 detached containers, and cleans up.
 
@@ -14,9 +14,10 @@ def pull_and_run_containers(image_name, tag):
   # Tag the image
   subprocess.run(["docker", "tag", image_name, f"{tag}"])
 
-  # Run 3 detached containers from the tagged image
+  # Run 3 detached containers from the tagged image with unique names
   for i in range(3):
-    subprocess.run(["docker", "run", "-d", f"{tag}"])
+    container_name = f"{base_name}-{i+1}"  # Add incrementing number for uniqueness
+    subprocess.run(["docker", "run", "-d", "--name", container_name, f"{tag}"])
 
   # Get container IDs
   # containers = subprocess.run(["docker", "ps", "-aq"], capture_output=True).stdout.decode().strip().splitlines()
