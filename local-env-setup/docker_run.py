@@ -1,12 +1,13 @@
 import subprocess
 
-def pull_and_run_containers(image_name, tag, base_name="ssh-srv"):
+def run_containers(image_name, tag, base_name="ssh-srv"):
   """
-  Pulls a Docker image, tags it, runs 3 detached containers, and cleans up.
+  Pulls a Docker image, tags it, and runs 3 detached containers with names.
 
   Args:
     image_name: The name of the Docker image to pull.
     tag: The new tag to assign to the image.
+    base_name: The base name for container names (default: "ssh-srv").
   """
   # Pull the image
   subprocess.run(["docker", "pull", image_name])
@@ -19,13 +20,11 @@ def pull_and_run_containers(image_name, tag, base_name="ssh-srv"):
     container_name = f"{base_name}-{i+1}"  # Add incrementing number for uniqueness
     subprocess.run(["docker", "run", "-d", "--name", container_name, f"{tag}"])
 
-  # Get container IDs
-  # containers = subprocess.run(["docker", "ps", "-aq"], capture_output=True).stdout.decode().strip().splitlines()
-
+  print(f"Successfully pulled, tagged as '{tag}', and ran 3 containers from {image_name}")
 
 if __name__ == "__main__":
-  # Replace 'your_image_name' and 'your_tag' with actual values
+
   image_name = "mohaziz00/ssh-srv:v0.1"
   tag = "ssh-srv"
-  pull_and_run_containers(image_name, tag)
-  print(f"Successfully pulled, tagged as '{tag}', ran 3 containers from {image_name}")
+  run_containers(image_name, tag)
+
