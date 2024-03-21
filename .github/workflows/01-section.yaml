@@ -7,7 +7,7 @@ on:
     workflow_dispatch:
 
 env:
-    working-dir: 01-section
+    working-dir: local-env-setup
 
 jobs:
     build-image:
@@ -35,6 +35,6 @@ jobs:
             - name: Build and push
               uses: docker/build-push-action@v5
               with:
-                context: ${{ env.working-dir  }}
+                context: ${{ env.working-dir  }}/v1
                 push: true
                 tags: mohaziz00/ssh-srv:${{ steps.get_version.outputs.tag }}

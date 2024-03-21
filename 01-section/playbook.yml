@@ -12,19 +12,29 @@
       - build-essential
       - python3-pip
 
-    - name: Install MySQL
-      apt:
-         name="{{ item }}"
-         state=present
-      with_items:
-        - mysql-server
-        - mysql-client
-
     - name: Make sure pymysql is present
       become: true # needed if the other tasks are not played as root
       pip:
         name: pymysql
         state: present
+
+    - name: Download MySQL Community Release package
+      get_url:
+        url: http://repo.mysql.com/mysql-community-release-el7-5.noarch.rpm
+        dest: /tmp/mysql-community-release-el7-5.noarch.rpm
+
+    - name: Install MySQL Community Release package
+      apt:
+        name: /tmp/mysql-community-release-el7-5.noarch.rpm
+        state: present
+
+    # - name: Install MySQL
+    #   apt:
+    #      name="{{ item }}"
+    #      state=present
+    #   with_items:
+    #     - mysql-server
+    #     - mysql-client
 
     - name: Start the MySQL service
       service:
