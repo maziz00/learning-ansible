@@ -1,5 +1,10 @@
 - name: Deploy a web application
   hosts: db_and_web_server1, db_and_web_server2
+
+  vars:
+    mysql_user: root
+    # mysql_password: your_mysql_password
+  
   tasks:
     - name: Install all required dependencies
       apt:
@@ -18,16 +23,6 @@
         name: pymysql
         state: present
 
-    # - name: Download MySQL Community Release package
-    #   get_url:
-    #     url: http://repo.mysql.com/mysql-community-release-el7-5.noarch.rpm
-    #     dest: /tmp/mysql-community-release-el7-5.noarch.rpm
-
-    # - name: Install MySQL Community Release package
-    #   apt:
-    #     name: /tmp/mysql-community-release-el7-5.noarch.rpm
-    #     state: present
-
     - name: Install MySQL
       apt:
          name="{{ item }}"
@@ -42,10 +37,19 @@
         state: started
         enabled: yes
 
+    - name: Copy MySQL configuration template
+      template:
+        src: my.cnf.j2
+        dest: /root/.my.cnf
+        owner: root
+        group: root
+        mode: '0600'
+
     - name: Create application database
-      mysql_db: 
-        name=employee_db
-        state=present
+      mysql_db:
+        login_unix_socket: /var/run/mysqld/mysqld.sock 
+        name: employee_db
+        state: present
 
     - name: Creat database user
       mysql_user:
@@ -65,8 +69,9 @@
 
     - name: Copy source code
       copy:
-        src=app.py
-        dest=/opt/app.py
+        src: app.py
+        dest: /opt/app.py
+        mode: preserv
 
     - name: Start web service
       shell: FLASK_APP=app.py nohup flask run --host=0.0.0.0 &
