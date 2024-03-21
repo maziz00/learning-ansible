@@ -23,8 +23,5 @@ RUN echo "export VISIBLE=now" >> /etc/profile
 # SSH port
 EXPOSE 22
 
-# Start SSH service
-RUN  /usr/sbin/sshd
-
 # Keep container running
-CMD ["sleep", "infinity"]
+ENTRYPOINT ["/usr/sbin/sshd","-eD"]

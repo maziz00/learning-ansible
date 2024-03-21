@@ -12,6 +12,14 @@ env:
 jobs:
     build-image:
         runs-on: ubuntu-latest
+        strategy:
+          fail-fast: false
+          matrix:
+            include:
+              - context: local-env-setup/centos
+                tags: mohaziz00/centos-srv
+              - context: local-env-setup/ubuntu
+                tags: mohaziz00/ubuntu-srv
         outputs:
             get-version: ${{ steps.get_version.outputs.tag }}
         steps:
@@ -35,6 +43,6 @@ jobs:
             - name: Build and push
               uses: docker/build-push-action@v5
               with:
-                context: ${{ env.working-dir  }}/v1
+                context: ${{ matrix.context }}
                 push: true
-                tags: mohaziz00/ssh-srv:${{ steps.get_version.outputs.tag }}
+                tags: ${{ matrix.tags }}":"${{ steps.get_version.outputs.tag }}
