@@ -1,7 +1,7 @@
 FROM ubuntu:20.04
 
-RUN --mount=type=secret,id=cred_secret && \
-    sed -i "s/CREDS=/CREDS=$(cat /run/secrets/cred_secret)/" .env.ubuntu
+# RUN --mount=type=secret,id=cred_secret && \
+#     sed -i "s/CREDS=/CREDS=$(cat /run/secrets/cred_secret)/" .env.ubuntu
 
 # Install Packages
 RUN apt-get update && apt-get install -y openssh-server curl vim && \
