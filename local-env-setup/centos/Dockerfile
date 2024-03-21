@@ -1,15 +1,18 @@
 FROM centos:centos7.9.2009
 
 
-RUN --mount=type=secret,id=cred_secret && \
-    export  CREDS=cred_secret
+# RUN --mount=type=secret,id=cred_secret && \
+#     sed -i "s/CREDS=/CREDS=$(cat /run/secrets/cred_secret)/" .env.centos
+
+# ARG name
+# ENV pass $name
 
 # Install Packages
 RUN yum update -y && yum install -y openssh-server curl vim sudo epel-release && \
     mkdir /var/run/sshd mkdir /home/ansible && \
     useradd -r -s /bin/bash -d /home/ansible ansible && \
-    echo "root:$CREDS" | chpasswd && \
-    echo "ansible:$CREDS" |  chpasswd && \
+    echo "root:Passw0rd" | chpasswd && \
+    echo "ansible:Passw0rd" |  chpasswd && \
     usermod -aG wheel ansible && \
     cp /etc/ssh/sshd_config /etc/ssh/sshd_config.bak
 

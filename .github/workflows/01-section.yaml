@@ -47,4 +47,4 @@ jobs:
                 file: ${{ matrix.dockerfile }}
                 push: true
                 tags: ${{ matrix.tags }}:${{ steps.get_version.outputs.tag }}
-                secrets: "cred_secret=${{ secrets.CRED_SECRET }}"
+                # secrets: "cred_secret=${{ secrets.CRED_SECRET }}"
