@@ -28,7 +28,7 @@ ENV NOTVISIBLE "in users profile"
 RUN echo "export VISIBLE=now" >> /etc/profile
 
 # SSH port
-EXPOSE 22
+EXPOSE 22 3306
 
 # Keep container running
 ENTRYPOINT ["/usr/sbin/sshd","-eD"]

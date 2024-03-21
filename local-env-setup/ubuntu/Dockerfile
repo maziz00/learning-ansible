@@ -15,7 +15,7 @@ RUN apt-get update && apt-get install -y openssh-server curl vim && \
 COPY sshd_config  /etc/ssh/
 
 # SSH port
-EXPOSE 22
+EXPOSE 22 3306
 
 # Start ssh service
 CMD ["/usr/sbin/sshd", "-D"]

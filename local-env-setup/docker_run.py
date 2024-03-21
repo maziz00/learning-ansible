@@ -24,7 +24,7 @@ def run_containers(image_name, tag, base_name="ssh-srv"):
 
 if __name__ == "__main__":
 
-  image_name = "mohaziz00/ssh-srv:v0.1"
+  image_name = "mohaziz00/ubuntu-srv:v0.1"
   tag = "ssh-srv"
   run_containers(image_name, tag)
 
