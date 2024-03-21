@@ -46,4 +46,4 @@ jobs:
                 context: ${{ env.working-dir }}
                 file: ${{ matrix.dockerfile }}
                 push: true
-                tags: ${{ matrix.tags }}':'${{ steps.get_version.outputs.tag }}
+                tags: ${{ matrix.tags }}:${{ steps.get_version.outputs.tag }}
