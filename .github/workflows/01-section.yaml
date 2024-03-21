@@ -17,9 +17,9 @@ jobs:
           matrix:
             include:
               - context: local-env-setup/centos
-                tags: mohaziz00/centos-srv
+                tags: mohaziz00/centos-srv':'
               - context: local-env-setup/ubuntu
-                tags: mohaziz00/ubuntu-srv
+                tags: mohaziz00/ubuntu-srv':'
         outputs:
             get-version: ${{ steps.get_version.outputs.tag }}
         steps:
@@ -45,4 +45,4 @@ jobs:
               with:
                 context: ${{ matrix.context }}
                 push: true
-                tags: ${{ matrix.tags }}":"${{ steps.get_version.outputs.tag }}
+                tags: ${{ matrix.tags }}${{ steps.get_version.outputs.tag }}
