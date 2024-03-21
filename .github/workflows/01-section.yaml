@@ -16,10 +16,10 @@ jobs:
           fail-fast: false
           matrix:
             include:
-              - context: local-env-setup/centos
-                tags: mohaziz00/centos-srv':'
-              - context: local-env-setup/ubuntu
-                tags: mohaziz00/ubuntu-srv':'
+              - dockerfile: local-env-setup/centos/Dockerfile
+                tags: mohaziz00/centos-srv
+              - dockerfile: local-env-setup/ubuntu/Dockerfile
+                tags: mohaziz00/ubuntu-srv
         outputs:
             get-version: ${{ steps.get_version.outputs.tag }}
         steps:
@@ -43,6 +43,7 @@ jobs:
             - name: Build and push
               uses: docker/build-push-action@v5
               with:
-                context: ${{ matrix.context }}
+                context: ${{ env.working-dir }}
+                file: ${{ matrix.dockerfile }}
                 push: true
-                tags: ${{ matrix.tags }}${{ steps.get_version.outputs.tag }}
+                tags: ${{ matrix.tags }}':'${{ steps.get_version.outputs.tag }}
