@@ -12,6 +12,7 @@ env:
 jobs:
     build-image:
         runs-on: ubuntu-latest
+        concurrency: ${{ github.workflow }}-${{ github.ref }}
         strategy:
           fail-fast: false
           matrix:
@@ -47,3 +48,4 @@ jobs:
                 file: ${{ matrix.dockerfile }}
                 push: true
                 tags: ${{ matrix.tags }}:${{ steps.get_version.outputs.tag }}
+                secrets: "cred_secret=${{ secrets.CRED_SECRET }}"
