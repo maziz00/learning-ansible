@@ -1,91 +1,105 @@
-
 -
   name: Deploy a web application
   hosts: db_and_web_server1, db_and_web_server2
-
+  become: true
   vars:
-    mysql_root_user: root
-    mysql_root_password: Passw0rd
     db_name: employee_db
-
+    db_user: db_user
+    db_password: Passw0rd
+    mysql_root_password: Passw0rd
+  
   tasks:
-  - name: Install all required dependencies
-    apt:
-      name: "{{ item }}"
-      state: present
-    with_items:
-    - python
-    - python-setuptools
-    - python-dev
-    - build-essential
-    - python-pip
-    - python-mysqldb
+    - name: Install dependencies
+      apt: name={{ item }} state=present
+      with_items:
+       - python
+       - python-setuptools
+       - python-dev
+       - build-essential
+       - python3-pip
+       - python3-mysqldb
 
-  # - name: Create MySQL database
-  #   become: true
-  #   mysql_db:
-  #     name: "{{ db_name }}"
-  #     login_user: "{{ mysql_root_user }}"
-  #     login_password: "{{ mysql_root_password }}"
-
-  - name: Install MySQL
-    apt:
+    - name: Install MySQL database
+      apt:
         name: "{{ item }}"
+        state:  present
+      with_items:
+       - mysql-server
+       - mysql-client
+
+    - name: Start Mysql Service
+      service:
+        name: mysql
+        state: started
+        enabled: yes
+
+    # - name: Set MySQL root password
+    #   mysql_user:
+    #     name: root
+    #     password: "{{ mysql_root_password }}"
+    #     host: localhost
+    #     login_user: root
+    #     login_password: ''
+
+    # - name: Create MySQL database
+    #   mysql_db:
+    #     name: "{{ db_name }}"
+    #     state: present
+    #     login_user: root
+    #     login_password: "{{ mysql_root_password }}"
+    #     login_unix_socket: /var/run/mysqld/mysqld.sock
+
+    # - name: Create MySQL user
+    #   mysql_user:
+    #     name: "{{ db_user }}"
+    #     password: "{{ db_password }}"
+    #     host: localhost
+    #     priv: "{{ db_name }}.*:ALL"
+    #     state: present
+    #     login_user: root
+    #     login_password: "{{ mysql_root_password }}"
+
+    # - name: Copy .my.cnf file to the target host
+    #   copy:
+    #     src: .my.cnf
+    #     dest: /root/.my.cnf
+    #     owner: root
+    #     group: root
+    #     mode: 0600
+
+    # - name: Creating database
+    #   mysql_db:
+    #     name: "{{ db_name }}"
+    #     state: present
+    #     login_unix_socket: /var/run/mysqld/mysqld.sock
+
+    # - name: Create db User
+    #   mysql_user:
+    #     name: "{{ db_user }}"
+    #     password: "{{ db_password }}"
+    #     priv: "{{ db_name }}.*:ALL"
+    #     host: 'localhost'
+    #     state: present
+    #     login_unix_socket: /var/run/mysqld/mysqld.sock
+
+    # - name: Create Application Database
+    #   mysql_db: name={{ db_name }} state=present
+
+    # - name: Create Application DB User
+    #   mysql_user: name={{ db_user }} password={{ db_password }} priv='*.*:ALL' host='%' state='present'
+
+    - name: Install Python Flask dependencies
+      pip:
+        name: '{{ item }}'
         state: present
-    with_items:
-      - mysql-server
-      - mysql-client
+      with_items:
+       - flask
+       - flask-mysql
 
-  - name: Start the MySQL service
-    service:
-      name: mysql
-      state: started
-      enabled: yes
+    - name: Copy web-server code
+      copy: 
+        src: app.py 
+        dest: /opt/app.py
 
-  - name: Set password for root user
-    mysql_user:
-      name: "{{ mysql_user }}"
-      password: "{{ mysql_password }}"
-      priv: '*.*:ALL,GRANT'
-      host: 'localhost'
-      login_unix_socket: /var/run/mysqld/mysqld.sock
-      state: present
-
-  # - name: Save root password in .my.cnf
-  #   template:
-  #     src: my_cnf.j2
-  #     dest: /root/.my.cnf
-  #     owner: root
-  #     mode: '0600'
-
-  - name: Create application database
-    mysql_db:
-      name: "{{ db_name }}"
-      state: present
-
-  - name: Creat database user
-    mysql_user:
-      name: db_user
-      password: Passw0rd
-      priv: '*.*:ALL'
-      state: present
-      host: '%'
-
-  - name: Install python flask dependencies
-    pip:
-      name: "{{ item }}"
-      state: present
-    with_items:
-      - flask
-      - flask-mysql
-
-  - name: Copy source code
-    copy:
-      src: app.py
-      dest: /opt/app.py
-      mode: preserv
-
-  - name: Start web service
-    shell: FLASK_APP=app.py nohup flask run --host=0.0.0.0 &
-        
-      
+    - name: Start web-application
+      shell: FLASK_APP=/opt/app.py nohup flask run --host=0.0.0.0 &
