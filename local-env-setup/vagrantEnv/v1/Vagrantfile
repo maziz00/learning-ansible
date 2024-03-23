@@ -22,6 +22,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       srv.vm.provision "shell", inline: <<-SHELL
         sudo apt-get update
         sudo apt-get install -y curl vim
+        # Create ansible user and password
+        sudo mkdir /home/ansible
+        sudo useradd -m -s /bin/bash -h /home/ansible ansible
+        echo "ansible:Passw0rd" | sudo chpasswd ansible
       SHELL
 
       # Optional: Configure shared folders for easier access (modify paths)
