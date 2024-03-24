@@ -6,7 +6,7 @@ VAGRANTFILE_API_VERSION = "2"
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   # Define the number of VMs (modify as needed)
-  num_vms = 1
+  num_vms = 2
 
   # Loop to create multiple VMs
   (1..num_vms).each do |i|
@@ -23,15 +23,22 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
       # Provisioning with shell script (update commands as needed)
       srv.vm.provision "shell", inline: <<-SHELL
-        sudo chsh -s /bin/bash
-        sudo apt-get update
-        sudo apt-get install -y curl vim git
-        # Create ansible user and password
-        sudo useradd -m -s /bin/bash -h /home/ansible ansible
-        for USER in ansible root
-        do
-          echo -e "Passw0rd" | sudo -S passwd --stdin $USER
-        done
+          # Creat ansible user
+          sudo useradd -m -s /bin/bash -d /home/ansible ansible
+
+          # Set password for user
+          PASSWD="Passw0rd"
+          USER="ansible"
+
+          # Change user password
+          echo -e "$PASSWD\n$PASSWD" | sudo passwd "$USER"
+
+          # Optionally, ensure password change is successful
+          if [ $? -eq 0 ]; then
+              echo "Password for user $USER changed successfully."
+          else
+              echo "Failed to change password for user $USER."
+          fi
       SHELL
 
       # Optional: Configure shared folders for easier access (modify paths)
