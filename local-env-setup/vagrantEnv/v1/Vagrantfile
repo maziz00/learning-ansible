@@ -1,9 +1,12 @@
 VAGRANTFILE_API_VERSION = "2"
 
+# require_relative '.vagrant/secrets.rb'
+# include Secrets
+
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   # Define the number of VMs (modify as needed)
-  num_vms = 3
+  num_vms = 1
 
   # Loop to create multiple VMs
   (1..num_vms).each do |i|
@@ -20,18 +23,22 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
       # Provisioning with shell script (update commands as needed)
       srv.vm.provision "shell", inline: <<-SHELL
+        sudo chsh -s /bin/bash
         sudo apt-get update
         sudo apt-get install -y curl vim git
         # Create ansible user and password
         sudo useradd -m -s /bin/bash -h /home/ansible ansible
-        echo "ansible:Passw0rd" | sudo chpasswd
+        for USER in ansible root
+        do
+          echo -e "Passw0rd" | sudo -S passwd --stdin $USER
+        done
       SHELL
 
       # Optional: Configure shared folders for easier access (modify paths)
-      srv.vm.synced_folder "./", "/vagrant", type: "nfs"
+      # srv.vm.synced_folder "./", "/vagrant", type: "nfs"
 
       # Optional: Configure port forwarding (modify ports as needed)
-      srv.vm.network "forwarded_port", guest: 80, host: 8090
+      # srv.vm.network "forwarded_port", guest: 80, host: 8090
 
 
       srv.vm.provider "virtualbox" do |vb|
