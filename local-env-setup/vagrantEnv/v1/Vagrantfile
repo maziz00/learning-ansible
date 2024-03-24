@@ -7,37 +7,36 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   # Loop to create multiple VMs
   (1..num_vms).each do |i|
-    config.vm.define "ansible-client-#{i}" do |srv|
+    config.vm.define "srv-#{i}" do |srv|
 
       # Set the desired Ubuntu version (check available boxes with `vagrant box list`)
-      srv.vm.box = "ubuntu/focal64"
+      srv.vm.box = "bento/ubuntu-22.04"
 
       # Configure private network with unique IPs for each VM
       srv.vm.network "private_network", ip: "200.100.100.#{10 + i}"
 
       # Configure vm hostname
-      srv.vm.hostname = "ubuntu-client#{i}"
+      srv.vm.hostname = "ubuntu-vm#{i}"
 
       # Provisioning with shell script (update commands as needed)
       srv.vm.provision "shell", inline: <<-SHELL
         sudo apt-get update
-        sudo apt-get install -y curl vim
+        sudo apt-get install -y curl vim git
         # Create ansible user and password
-        sudo mkdir /home/ansible
         sudo useradd -m -s /bin/bash -h /home/ansible ansible
-        echo "ansible:Passw0rd" | sudo chpasswd ansible
+        echo "ansible:Passw0rd" | sudo chpasswd
       SHELL
 
       # Optional: Configure shared folders for easier access (modify paths)
       srv.vm.synced_folder "./", "/vagrant", type: "nfs"
 
       # Optional: Configure port forwarding (modify ports as needed)
-      srv.vm.network "forwarded_port", guest: 80, host: 8080
+      srv.vm.network "forwarded_port", guest: 80, host: 8090
 
 
       srv.vm.provider "virtualbox" do |vb|
       # Customize the amount of memory on the VM:
-        vb.memory = "512"
+        vb.memory = "1024"
       end
     end
   end
