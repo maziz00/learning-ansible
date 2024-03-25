@@ -10,7 +10,9 @@
   
   tasks:
     - name: Install dependencies
-      apt: name={{ item }} state=present
+      apt: 
+         name: "{{ item }}" 
+         state: present
       with_items:
        - python
        - python-setuptools
@@ -67,20 +69,20 @@
     #     group: root
     #     mode: 0600
 
-    # - name: Creating database
-    #   mysql_db:
-    #     name: "{{ db_name }}"
-    #     state: present
-    #     login_unix_socket: /var/run/mysqld/mysqld.sock
+    - name: Creating database
+      mysql_db:
+        name: "{{ db_name }}"
+        state: present
+        login_unix_socket: /var/run/mysqld/mysqld.sock
 
-    # - name: Create db User
-    #   mysql_user:
-    #     name: "{{ db_user }}"
-    #     password: "{{ db_password }}"
-    #     priv: "{{ db_name }}.*:ALL"
-    #     host: 'localhost'
-    #     state: present
-    #     login_unix_socket: /var/run/mysqld/mysqld.sock
+    - name: Create db User
+      mysql_user:
+        name: "{{ db_user }}"
+        password: "{{ db_password }}"
+        priv: "{{ db_name }}.*:ALL"
+        host: 'localhost'
+        state: present
+        login_unix_socket: /var/run/mysqld/mysqld.sock
 
     # - name: Create Application Database
     #   mysql_db: name={{ db_name }} state=present
@@ -90,7 +92,7 @@
 
     - name: Install Python Flask dependencies
       pip:
-        name: '{{ item }}'
+        name: "{{ item }}"
         state: present
       with_items:
        - flask
