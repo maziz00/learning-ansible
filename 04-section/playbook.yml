@@ -1,0 +1,46 @@
+---
+- name: Deploy a mysql DB
+  hosts: db_server
+  roles:
+    - python
+    - mysql_db
+
+- name: Deploy a Web Server
+  hosts: web_server
+  roles:
+    - python
+    - flask_web
+
+- name: Monitor Web Application for 6 Minutes
+  hosts: web_server
+  tasks:
+    - name: Run monitor_webapp.py
+      command: /opt/monitor_webapp.py
+      async: 360
+      poll: 0
+      register: webapp_result
+
+    - name: Check status of async task
+      ansible.builtin.async_status:
+        jid: "{{ webapp_result.ansible_job_id }}"
+      register: webapp_job_result
+      retries: 30
+      until: webapp_job_result.finished
+
+- name: Monitor Database for 6 Minutes
+  hosts: db_server
+  tasks:
+    - name: Run monitor_database.py
+      command: /opt/monitor_database.py
+      async: 360
+      poll: 0
+      register: database_result
+
+    - name: Check status of async task
+      ansible.builtin.async_status:
+        jid: "{{ database_result.ansible_job_id }}"
+      register: db_job_result
+      retries: 30
+      until: db_job_result.finished
+
+
