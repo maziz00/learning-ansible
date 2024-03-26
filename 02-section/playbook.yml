@@ -1,12 +1,6 @@
 -
   name: Deploy a web application
   hosts: db_and_web_server1, db_and_web_server2
-  # become: true
-  vars:
-    db_name: employee_db
-    db_user: db_user
-    db_password: Passw0rd
-    mysql_root_password: Passw0rd
   
   tasks:
     - name: Install dependencies
