@@ -1,9 +1,19 @@
 -
-  name: Test Jinja2 Templating
-  hosts: localhost
+  name: Install Dependencies
+  hosts: app_servers
   vars:
-    first_name: Mohamed
-    last_name: Abdel Aziz
+    web_dependencies:
+         - python3
+         - python-setuptools
+         - python3-dev
+         - build-essential
+         - python3-pip
+         - python3-mysqldb
+    sql_dependencies:
+         - python3
+         - python3-mysqldb
   tasks:
-  - debug:
-      msg: 'The name is {{ last_name }}! {{ first_name }} {{ last_name }}!'
+  - name: Install dependencies
+    apt: name='{{ item }}' state=installed
+    with_items: '{{ web_dependencies | union(sql_dependencies) }}'
+      

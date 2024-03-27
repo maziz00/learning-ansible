@@ -1,4 +1,8 @@
 #!/bin/bash
 # Script to run ansible commands
 
-ansible-playbook playbook.yml
+# ansible-playbook playbook-debug.yml
+
+ansible-playbook -i "localhost" playbook-local.yml
+
+ansible-playbook playbook.yml -i inventory
